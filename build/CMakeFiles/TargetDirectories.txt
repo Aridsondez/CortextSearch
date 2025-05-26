@@ -1,0 +1,3 @@
+/Users/aridsondez/Desktop/CortexSearch/build/CMakeFiles/CortexSearch.dir
+/Users/aridsondez/Desktop/CortexSearch/build/CMakeFiles/edit_cache.dir
+/Users/aridsondez/Desktop/CortexSearch/build/CMakeFiles/rebuild_cache.dir
