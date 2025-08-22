@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Large Files
+models/
+build/
+*.onnx
+*.sqlite
+*.out
+*.exe
+*.bin

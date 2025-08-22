@@ -18,6 +18,7 @@ EmbeddingEngine::EmbeddingEngine(const std::string& modelPath)
 
     try {
         session = Ort::Session(env, modelPath.c_str(), sessionOptions);
+        std::cout << "[ONNX] Model loaded successfully from: " << modelPath << std::endl;
     } catch (const Ort::Exception& e) {
         std::cerr << "Failed to load ONNX model: " << e.what() << std::endl;
     }
@@ -25,6 +26,9 @@ EmbeddingEngine::EmbeddingEngine(const std::string& modelPath)
 
 std::vector<float> EmbeddingEngine::createEmbedding(const std::string& context){
     std::vector<float> vector;
+
+    //alright creating the token for the input 
+    std::vector<int64_t> inputIds = 
 
     for(int i = 0; i < 10; i++){
         vector.push_back(static_cast<float>( context.length() % (i+5)/(i+1)));
