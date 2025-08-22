@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <sqlite3.h>
+#include <tuple>
+
 
 class DatabaseManager{
     public:
@@ -28,16 +31,14 @@ class DatabaseManager{
 
 
     private:
+        sqlite3* db;
         //basically changing the information into something that can be stored in the db
         //so the vectors that I have being a string of vectors has to be serialized for the db
         void initializeDatabase();
-        std::string embeddingSerializer(const std::vector<float>& embedding);
-        std::vector<float> embeddingDeserializer(const std::string& embedding);
         //Also need a reference to the actual databse 
 
         //Protects against duplicates 
         bool fileExists(const std::string& filePath);
-        void* db;//thi is the sqlite db
 
         //checking last modified date
         bool fileNeedUpdate(const std::string& filePath, long currentModified);

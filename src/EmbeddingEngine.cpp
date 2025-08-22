@@ -13,7 +13,7 @@ EmbeddingEngine::EmbeddingEngine(const std::string& onnxModelPath,
                                  const std::string& tokenizerScript,
                                  const std::string& tokenizerJson,
                                  size_t maxSeqLen)
-: env(ORT_LOGGING_LEVEL_WARNING, "CortexSearch"),
+: env(ORT_LOGGING_LEVEL_WARNING, "embed"),
   session(nullptr),
   maxSeqLen_(maxSeqLen)
 {
