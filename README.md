@@ -1,90 +1,61 @@
-### CortextSearch: AI Powered Local File Finder for macOS
+# CortexSearch: AI-Powered Local File Finder for macOS
 
-# CortexSearch
+CortexSearch is a C++17 local semantic search engine that indexes your files, extracts context, generates embeddings with ONNX Runtime, and lets you run natural-language queries against your own data — fully offline.
 
-CortexSearch is a C++-based local file indexing and search engine that uses contextual embeddings to allow for semantic search across PDFs, images (via OCR), and text files.
+## Current Capabilities
 
----
+Recursive File Scanning
+Walks directories, avoids duplicates using absolute path + last modified timestamp.
 
-## Project Purpose
+Context Extraction
 
-Build a blazing-fast, local, intelligent file search engine. CortexSearch does the following:
-- Indexes text from `.txt`, `.pdf`, `.jpg`, `.png`, and `.jpeg` files.
-- Extracts context using OCR (for images) and PDF parsers.
-- Computes contextual embeddings from content (using ONNX model).
-- Stores data and vectors in a SQLite database.
-- Allows real-time semantic search via cosine similarity.
+`.txt` → plain text read
 
----
+`.pdf` → parsed via Poppler
 
-## Features Implemented
+`.jpg/.png/.jpeg` → OCR via Tesseract
 
-###  Core Components:
-- **FileScanner**: Recursively scans directories, ignores duplicates (by path + last modified timestamp).
-- **ContextExtractor**: Extracts text from files using Tesseract for images and Poppler for PDFs.
-- **EmbeddingEngine (Stub)**: Currently generates dummy/random embeddings for extracted text.
-- **DatabaseManager**: Uses SQLite3 to store file info and vector embeddings. Supports insert/update logic.
-- **SearchEngine**: Computes cosine similarity and ranks search results by match strength.
+### Real Embeddings
 
-### Duplication Detection:
-- Uses full **absolute paths** and **last modified timestamps** to skip or update changed files.
+Integrated ONNX Runtime with a transformer model.
 
-### CLI Application:
-```bash
+Implemented custom C++ tokenizer to prepare input (input_ids, attention_mask).
+
+Generates dense embeddings per file (no more stubs).
+
+Database Persistence (SQLite3)
+
+Stores file metadata (path, name, extension, last_modified) + serialized embeddings.
+
+Smart logic: INSERT new, UPDATE if modified, skip otherwise.
+
+Search Engine
+
+Cosine similarity between query vector and stored embeddings.
+
+Returns ranked file matches with similarity scores.
+
+CLI Application
+
 # Index a directory
 ./CortexSearch --index /path/to/files
 
-# Search with a query
+# Query semantically
 ./CortexSearch --search "project plan for solar"
-```
 
----
-
-## What’s Left To Do
-
-### 1. Real Embedding (In Progress)
-- Install ONNX Runtime via Homebrew
-- Implement tokenizer to convert input text → model input tensor
-- Feed tokenized input into ONNX model to get real embedding vector
-
-### 2. Tokenizer
-- Must match the ONNX model's expectations (e.g., BERT tokenizer)
-- Outputs `input_ids`, `attention_mask` for ONNX input
-
-### 3. C++ UI (Optional)
-- Show indexed files, embeddings, and search results in a graphical interface
-- Can be done with **Qt** (full-featured) or **Dear ImGui** (lightweight dev dashboard)
-
----
-
-## 🛠️ Tech Stack
-
-| Area | Tool/Lib |
-|------|----------|
-| Language | C++17 |
-| DB | SQLite3 |
-| Embedding | ONNX Runtime (Transformer model) |
-| PDF Parsing | Poppler |
-| OCR | Tesseract |
-| Search | Cosine Similarity |
-| Build System | CMake |
-| CLI Interface | Custom Main Driver |
-| GUI (planned) | Qt or Dear ImGui |
-
----
-
-## Concepts To Remember
-
-- **Tokenizer** prepares raw text for the model (splits into tokens, adds padding, etc.).
-- **ONNX Model** outputs dense vector embeddings from tokenized input.
-- **Search** works by comparing query vector to stored file vectors using cosine similarity.
-- All file paths are normalized to absolute paths to avoid duplicates.
-
----
-
+🛠️ Tech Stack
+Area	Tool/Lib
+Language	C++17
+Embeddings	ONNX Runtime (transformer model)
+Tokenizer	Custom C++ BERT-style tokenizer
+DB	SQLite3
+PDF Parsing	Poppler
+OCR	Tesseract
+Search	Cosine Similarity
+Build System	CMake
+CLI	Custom Main Driver
+GUI (optional)	Qt or Dear ImGui
 ## Project Structure
-
-```
 CortexSearch/
 ├── include/
 │   ├── ContextExtractor.hpp
@@ -100,36 +71,46 @@ CortexSearch/
 │   ├── FileScanner.cpp
 │   └── SearchEngine.cpp
 ├── models/
-│   └── model.onnx
+│   ├── model.onnx
+│   └── vocab.txt
 ├── testData/
-│   └── example files for testing
+│   └── sample files
 ├── build/
 ├── CMakeLists.txt
-└── README.md  <-- (this file)
-```
+└── README.md
 
----
 
-## Commands To Remember
-
-```bash
-# Build the project
+# Build & Run
 cmake -S . -B build
 cmake --build build
 
-# Run the program
-./build/CortexSearch --index /path/to/files
-./build/CortexSearch --search "meeting notes from june"
+# Index directory
+./build/CortexSearch --index /Users/you/Documents
 
-# Check ONNX path manually
-ls /opt/homebrew/opt/onnxruntime/include/onnxruntime
-```
-
----
+# Search
+./build/CortexSearch --search "resume draft with internship"
 
 ## Next Steps
 
-1. Finish `Tokenizer` (text → tensor inputs)
-2. Complete `createEmbedding()` with ONNX model inference
-3. Add basic C++ GUI (if needed) to view file database + query results
-4. Refactor if needed for deployment (static linking, resource bundling)
+GUI (optional)
+Add a simple interface for browsing indexed files & search results.
+Options:
+
+Qt → full desktop app
+
+Dear ImGui → lightweight developer dashboard
+
+Ranking Enhancements
+Improve retrieval (hybrid keyword + semantic, configurable thresholds).
+
+Packaging
+Static build, Homebrew formula, or .dmg app bundle for macOS.
+
+Notes
+
+Duplicate ONNX schema warnings have been silenced (ORT_LOGGING_LEVEL_ERROR).
+
+Works offline: all embeddings + search happen locally.
+
+Database is persistent (cortex.db) and can be inspected via any SQLite client.
+
