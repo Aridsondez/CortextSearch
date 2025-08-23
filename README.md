@@ -2,6 +2,10 @@
 
 CortexSearch is a C++17 local semantic search engine that indexes your files, extracts context, generates embeddings with ONNX Runtime, and lets you run natural-language queries against your own data — fully offline.
 
+
+https://github.com/user-attachments/assets/188a6f74-76e8-4259-8409-b8035df887f8
+
+
 ## Current Capabilities
 
 Recursive File Scanning
