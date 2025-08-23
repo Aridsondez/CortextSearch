@@ -39,3 +39,8 @@ build/
 *.out
 *.exe
 *.bin
+/build/
+/cmake-build-*/
+.venv/
+/cortex.db
+*.DS_Store
