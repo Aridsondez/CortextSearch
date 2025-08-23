@@ -333,3 +333,34 @@ DatabaseManager::getAllFiles()
     sqlite3_finalize(st);
     return out;
 }
+
+std::vector<FileRow> DatabaseManager::listFiles(int limit){
+    std::vector<FileRow> out;
+    if (!db) return out;
+    
+    std::string sql =
+        "SELECT id, path, name, extension, last_modified "
+        "FROM files "
+        "ORDER BY last_modified DESC";
+    if (limit > 0) sql += " LIMIT ?";
+
+    sqlite3_stmt* st = nullptr;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &st, nullptr) != SQLITE_OK) {
+        std::cerr << "Prepare listFiles failed: " << sqlite3_errmsg(db) << "\n";
+        return out;
+    }
+    int bind = 1;
+    if (limit > 0) sqlite3_bind_int(st, bind++, limit);
+
+    while (sqlite3_step(st) == SQLITE_ROW) {
+        FileRow r;
+        r.id            = sqlite3_column_int64(st, 0);
+        r.path          = reinterpret_cast<const char*>(sqlite3_column_text(st, 1));
+        r.name          = reinterpret_cast<const char*>(sqlite3_column_text(st, 2));
+        r.extension     = reinterpret_cast<const char*>(sqlite3_column_text(st, 3));
+        r.last_modified = sqlite3_column_int64(st, 4);
+        out.emplace_back(std::move(r));
+    }
+    sqlite3_finalize(st);
+    return out;
+}

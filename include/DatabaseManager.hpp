@@ -12,6 +12,13 @@
 #include <sqlite3.h>
 #include <tuple>
 
+struct FileRow{
+    long long id;
+    std::string path;
+    std::string name;
+    std::string extension;
+    long long last_modified;
+};
 
 class DatabaseManager{
     public:
@@ -28,6 +35,8 @@ class DatabaseManager{
 
         //getting all files from db
         std::vector<std::tuple<std::string, std::string, std::string, std::vector<float> >> getAllFiles();
+
+        std::vector<FileRow> listFiles(int limit=200);
 
 
     private:
